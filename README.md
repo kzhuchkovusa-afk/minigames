@@ -3,14 +3,26 @@
 Personalized cognitive games (memory, attention, fast thinking) themed around each child's interests.
 See `81300457-kidsbrain_platform_architecture.md` (in the project brief) for the full plan.
 
+## 🎮 Live demo
+
+Once this branch is merged to `main`, the demo deploys to GitHub Pages automatically.
+
+- **Hub** — `index.html`: pick a sample child profile (dinosaurs / space / ocean)
+- **Memory Match game** — `memory.html?child=emma`: config-driven, fully themed
+- **Bonus Snake** — `snake.html`: the original game
+
+The same game template renders very differently per child because each child's config supplies their cards, colors, and welcome message. This is the "one template + per-child config = personalized experience" pattern from the architecture doc.
+
 ## Repository layout
 
 ```
 minigames/
-├── server/        Phase 1 — Node + Express + SQLite + JWT auth
-├── client/        (coming in Phase 2/3 — React frontend)
-├── index.html     Legacy standalone Snake game (deployed via GitHub Pages)
-└── .github/       Pages deploy workflow for the Snake game
+├── index.html     KidsBrain demo hub (child profile picker)
+├── memory.html    Config-driven Memory Match game
+├── configs.js     Demo child profiles (in real platform, these come from DB)
+├── snake.html     Original standalone Snake game
+├── server/        Phase 1 — Node + Express + SQLite + JWT auth (backend API)
+└── .github/       Pages deploy workflow
 ```
 
 ## Phase 1 — Backend foundation (done)

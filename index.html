@@ -1,323 +1,162 @@
 <!doctype html>
-<html lang="ru">
+<html lang="en">
 <head>
 <meta charset="utf-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
-<title>Snake</title>
+<title>KidsBrain — Personalized Cognitive Games</title>
 <style>
   :root {
-    --bg: #0f1115;
-    --panel: #161a22;
-    --grid: #1c2230;
-    --snake: #6ee7b7;
-    --snake-head: #34d399;
-    --food: #f97316;
-    --text: #e5e7eb;
-    --muted: #9ca3af;
-    --accent: #60a5fa;
+    --bg: #FFF8E7;
+    --panel: #FFFFFF;
+    --text: #1F2937;
+    --muted: #6B7280;
+    --accent: #2D8B4E;
+    --accent2: #F4A623;
+    --shadow: 0 10px 30px rgba(0,0,0,0.08);
   }
   * { box-sizing: border-box; }
-  html, body {
-    margin: 0;
-    padding: 0;
-    height: 100%;
-    background: var(--bg);
+  html, body { margin: 0; padding: 0; min-height: 100%; }
+  body {
+    background:
+      radial-gradient(circle at 20% 10%, #FFE9B0 0%, transparent 40%),
+      radial-gradient(circle at 80% 0%, #C8F2D5 0%, transparent 35%),
+      var(--bg);
     color: var(--text);
-    font-family: ui-sans-serif, system-ui, -apple-system, "Segoe UI", Roboto, sans-serif;
-    -webkit-tap-highlight-color: transparent;
-    user-select: none;
-    overscroll-behavior: none;
+    font-family: ui-sans-serif, system-ui, -apple-system, "Segoe UI", Roboto, "Comic Sans MS", sans-serif;
+    -webkit-font-smoothing: antialiased;
   }
   .wrap {
-    min-height: 100%;
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    justify-content: flex-start;
-    padding: 16px;
-    gap: 12px;
+    max-width: 980px;
+    margin: 0 auto;
+    padding: 32px 20px 80px;
   }
-  h1 {
-    margin: 4px 0 0;
-    font-size: 22px;
-    letter-spacing: 0.5px;
-  }
-  .hud {
-    display: flex;
-    gap: 16px;
-    color: var(--muted);
-    font-size: 14px;
-  }
-  .hud b { color: var(--text); font-weight: 600; }
-  .stage {
-    position: relative;
-    background: var(--panel);
-    border-radius: 12px;
-    padding: 8px;
-    box-shadow: 0 10px 30px rgba(0,0,0,0.4);
-  }
-  canvas {
-    display: block;
-    background: var(--grid);
-    border-radius: 6px;
-    image-rendering: pixelated;
-    width: min(92vw, 480px);
-    height: min(92vw, 480px);
-    touch-action: none;
-  }
-  .overlay {
-    position: absolute;
-    inset: 8px;
-    border-radius: 6px;
-    background: rgba(15, 17, 21, 0.78);
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    justify-content: center;
-    gap: 10px;
-    text-align: center;
-    padding: 16px;
-  }
-  .overlay.hidden { display: none; }
-  .overlay h2 { margin: 0; font-size: 20px; }
-  .overlay p { margin: 0; color: var(--muted); font-size: 14px; max-width: 28ch; }
-  button {
-    background: var(--accent);
-    color: #0b1020;
-    border: 0;
-    border-radius: 8px;
-    padding: 10px 18px;
+  header { text-align: center; margin-bottom: 28px; }
+  .badge {
+    display: inline-block;
+    background: #FFF1C9;
+    color: #8A5A00;
+    padding: 4px 12px;
+    border-radius: 999px;
+    font-size: 13px;
     font-weight: 600;
-    font-size: 15px;
-    cursor: pointer;
+    letter-spacing: 0.3px;
   }
-  button:active { transform: translateY(1px); }
-  .controls {
+  h1 { font-size: 38px; margin: 14px 0 8px; }
+  .sub { color: var(--muted); max-width: 620px; margin: 0 auto; font-size: 16px; line-height: 1.5; }
+  .grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+    gap: 18px;
+    margin-top: 28px;
+  }
+  .card {
+    background: var(--panel);
+    border-radius: 18px;
+    padding: 22px;
+    box-shadow: var(--shadow);
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+    transition: transform 0.15s ease;
+  }
+  .card:hover { transform: translateY(-3px); }
+  .card .theme-row {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    font-size: 14px;
     color: var(--muted);
-    font-size: 12px;
-    text-align: center;
-    max-width: 480px;
-    line-height: 1.5;
   }
-  kbd {
-    background: #232a38;
-    border-radius: 4px;
-    padding: 1px 6px;
-    font-size: 11px;
-    color: var(--text);
+  .swatch {
+    width: 14px; height: 14px; border-radius: 4px;
+    border: 1px solid rgba(0,0,0,0.08);
+  }
+  .name { font-size: 22px; font-weight: 700; margin: 0; }
+  .age { color: var(--muted); font-weight: 500; font-size: 14px; margin-left: 6px; }
+  .tagline { color: var(--muted); font-size: 14px; min-height: 40px; }
+  .play-btn {
+    display: inline-block;
+    margin-top: auto;
+    text-align: center;
+    padding: 12px 14px;
+    background: var(--accent);
+    color: white;
+    text-decoration: none;
+    border-radius: 12px;
+    font-weight: 700;
+    transition: background 0.15s;
+  }
+  .play-btn.secondary { background: var(--accent2); color: #4a2d00; }
+  .play-btn:hover { filter: brightness(1.05); }
+  .footer {
+    margin-top: 48px;
+    text-align: center;
+    color: var(--muted);
+    font-size: 13px;
+  }
+  .footer a { color: var(--accent); text-decoration: none; }
+  .preview {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 6px;
+    font-size: 22px;
+    line-height: 1;
+  }
+  .note {
+    margin-top: 32px;
+    padding: 16px 18px;
+    background: #FFF;
+    border-left: 4px solid var(--accent2);
+    border-radius: 10px;
+    font-size: 14px;
+    color: #5a4500;
+    box-shadow: var(--shadow);
   }
 </style>
 </head>
 <body>
-<div class="wrap">
-  <h1>Snake</h1>
-  <div class="hud">
-    <div>Счёт: <b id="score">0</b></div>
-    <div>Рекорд: <b id="best">0</b></div>
-  </div>
-  <div class="stage">
-    <canvas id="game" width="400" height="400" aria-label="Игровое поле"></canvas>
-    <div class="overlay" id="overlay">
-      <h2 id="overlayTitle">Snake</h2>
-      <p id="overlayText">Стрелки или WASD на клавиатуре. Свайпы на телефоне.</p>
-      <button id="startBtn">Играть</button>
+  <div class="wrap">
+    <header>
+      <span class="badge">DEMO</span>
+      <h1>🧠 KidsBrain</h1>
+      <p class="sub">Personalized cognitive games for kids — each child gets their own hub themed around what they love. Pick a sample child below to try the Memory Match game.</p>
+    </header>
+
+    <div id="profiles" class="grid"></div>
+
+    <div class="note">
+      <strong>How this works:</strong> One game template, infinite personalization. The cards, colors, and welcome message all come from a per-child config — same code, totally different experience.
+    </div>
+
+    <div class="footer">
+      Bonus: try the original <a href="snake.html">Snake game</a> · <a href="https://github.com/kzhuchkovusa-afk/minigames">source on GitHub</a>
     </div>
   </div>
-  <div class="controls">
-    Управление: <kbd>↑</kbd> <kbd>↓</kbd> <kbd>←</kbd> <kbd>→</kbd> или <kbd>WASD</kbd>. Пауза: <kbd>P</kbd> или <kbd>Space</kbd>. На телефоне — свайпы по полю.
-  </div>
-</div>
-<script>
-(() => {
-  const canvas = document.getElementById('game');
-  const ctx = canvas.getContext('2d');
-  const scoreEl = document.getElementById('score');
-  const bestEl = document.getElementById('best');
-  const overlay = document.getElementById('overlay');
-  const overlayTitle = document.getElementById('overlayTitle');
-  const overlayText = document.getElementById('overlayText');
-  const startBtn = document.getElementById('startBtn');
 
-  const COLS = 20;
-  const ROWS = 20;
-  const CELL = canvas.width / COLS;
+  <script src="configs.js"></script>
+  <script>
+    const profiles = window.KIDSBRAIN_PROFILES;
+    const grid = document.getElementById('profiles');
 
-  const STATE = { MENU: 0, PLAYING: 1, PAUSED: 2, OVER: 3 };
-  let state = STATE.MENU;
-
-  let snake, dir, nextDir, food, score, best, tickMs, accumulator, lastTime;
-
-  best = Number(localStorage.getItem('snake.best') || 0);
-  bestEl.textContent = best;
-
-  function reset() {
-    snake = [
-      { x: 9, y: 10 },
-      { x: 8, y: 10 },
-      { x: 7, y: 10 },
-    ];
-    dir = { x: 1, y: 0 };
-    nextDir = dir;
-    score = 0;
-    tickMs = 120;
-    accumulator = 0;
-    lastTime = performance.now();
-    placeFood();
-    scoreEl.textContent = score;
-  }
-
-  function placeFood() {
-    while (true) {
-      const f = { x: Math.floor(Math.random() * COLS), y: Math.floor(Math.random() * ROWS) };
-      if (!snake.some(s => s.x === f.x && s.y === f.y)) {
-        food = f;
-        return;
-      }
-    }
-  }
-
-  function step() {
-    if (nextDir.x !== -dir.x || nextDir.y !== -dir.y) dir = nextDir;
-    const head = { x: snake[0].x + dir.x, y: snake[0].y + dir.y };
-
-    if (head.x < 0 || head.x >= COLS || head.y < 0 || head.y >= ROWS) return gameOver();
-    if (snake.some((s, i) => i < snake.length - 1 && s.x === head.x && s.y === head.y)) return gameOver();
-
-    snake.unshift(head);
-    if (head.x === food.x && head.y === food.y) {
-      score += 1;
-      scoreEl.textContent = score;
-      if (score > best) {
-        best = score;
-        localStorage.setItem('snake.best', String(best));
-        bestEl.textContent = best;
-      }
-      tickMs = Math.max(60, 120 - Math.floor(score / 4) * 4);
-      placeFood();
-    } else {
-      snake.pop();
-    }
-  }
-
-  function gameOver() {
-    state = STATE.OVER;
-    overlayTitle.textContent = 'Игра окончена';
-    overlayText.textContent = `Счёт: ${score}. Рекорд: ${best}.`;
-    startBtn.textContent = 'Сыграть ещё';
-    overlay.classList.remove('hidden');
-  }
-
-  function draw() {
-    ctx.fillStyle = '#1c2230';
-    ctx.fillRect(0, 0, canvas.width, canvas.height);
-
-    ctx.strokeStyle = '#222a3a';
-    ctx.lineWidth = 1;
-    for (let i = 1; i < COLS; i++) {
-      ctx.beginPath();
-      ctx.moveTo(i * CELL, 0);
-      ctx.lineTo(i * CELL, canvas.height);
-      ctx.stroke();
-      ctx.beginPath();
-      ctx.moveTo(0, i * CELL);
-      ctx.lineTo(canvas.width, i * CELL);
-      ctx.stroke();
-    }
-
-    ctx.fillStyle = '#f97316';
-    const fx = food.x * CELL, fy = food.y * CELL;
-    ctx.beginPath();
-    ctx.arc(fx + CELL / 2, fy + CELL / 2, CELL / 2 - 2, 0, Math.PI * 2);
-    ctx.fill();
-
-    for (let i = snake.length - 1; i >= 0; i--) {
-      const s = snake[i];
-      ctx.fillStyle = i === 0 ? '#34d399' : '#6ee7b7';
-      const pad = i === 0 ? 1 : 2;
-      ctx.fillRect(s.x * CELL + pad, s.y * CELL + pad, CELL - pad * 2, CELL - pad * 2);
-    }
-  }
-
-  function loop(now) {
-    requestAnimationFrame(loop);
-    if (state !== STATE.PLAYING) { lastTime = now; return; }
-    const delta = now - lastTime;
-    lastTime = now;
-    accumulator += delta;
-    while (accumulator >= tickMs) {
-      step();
-      accumulator -= tickMs;
-      if (state !== STATE.PLAYING) break;
-    }
-    draw();
-  }
-
-  function start() {
-    reset();
-    state = STATE.PLAYING;
-    overlay.classList.add('hidden');
-    draw();
-  }
-
-  function togglePause() {
-    if (state === STATE.PLAYING) {
-      state = STATE.PAUSED;
-      overlayTitle.textContent = 'Пауза';
-      overlayText.textContent = 'Нажмите, чтобы продолжить.';
-      startBtn.textContent = 'Продолжить';
-      overlay.classList.remove('hidden');
-    } else if (state === STATE.PAUSED) {
-      state = STATE.PLAYING;
-      lastTime = performance.now();
-      overlay.classList.add('hidden');
-    }
-  }
-
-  startBtn.addEventListener('click', () => {
-    if (state === STATE.PAUSED) togglePause();
-    else start();
-  });
-
-  const keyMap = {
-    ArrowUp: { x: 0, y: -1 }, w: { x: 0, y: -1 }, W: { x: 0, y: -1 },
-    ArrowDown: { x: 0, y: 1 }, s: { x: 0, y: 1 }, S: { x: 0, y: 1 },
-    ArrowLeft: { x: -1, y: 0 }, a: { x: -1, y: 0 }, A: { x: -1, y: 0 },
-    ArrowRight: { x: 1, y: 0 }, d: { x: 1, y: 0 }, D: { x: 1, y: 0 },
-  };
-  window.addEventListener('keydown', (e) => {
-    if (e.key === 'p' || e.key === 'P' || e.key === ' ') {
-      e.preventDefault();
-      if (state === STATE.MENU || state === STATE.OVER) start();
-      else togglePause();
-      return;
-    }
-    const d = keyMap[e.key];
-    if (!d) return;
-    e.preventDefault();
-    nextDir = d;
-  }, { passive: false });
-
-  let touchStart = null;
-  canvas.addEventListener('touchstart', (e) => {
-    if (state === STATE.MENU || state === STATE.OVER) { start(); return; }
-    const t = e.changedTouches[0];
-    touchStart = { x: t.clientX, y: t.clientY };
-  }, { passive: true });
-  canvas.addEventListener('touchend', (e) => {
-    if (!touchStart) return;
-    const t = e.changedTouches[0];
-    const dx = t.clientX - touchStart.x;
-    const dy = t.clientY - touchStart.y;
-    if (Math.abs(dx) < 12 && Math.abs(dy) < 12) { togglePause(); touchStart = null; return; }
-    if (Math.abs(dx) > Math.abs(dy)) nextDir = { x: Math.sign(dx), y: 0 };
-    else nextDir = { x: 0, y: Math.sign(dy) };
-    touchStart = null;
-  }, { passive: true });
-
-  reset();
-  draw();
-  requestAnimationFrame(loop);
-})();
-</script>
+    Object.entries(profiles).forEach(([key, p]) => {
+      const previewEmojis = p.memory_cards.slice(0, 5).map(c => c.emoji).join(' ');
+      const card = document.createElement('div');
+      card.className = 'card';
+      card.style.background = p.colors.card;
+      card.style.color = p.colors.text;
+      card.innerHTML = `
+        <div class="theme-row">
+          <span class="swatch" style="background:${p.colors.primary}"></span>
+          <span class="swatch" style="background:${p.colors.secondary}"></span>
+          <span>Theme · <strong>${p.theme}</strong></span>
+        </div>
+        <h2 class="name">${p.child_name}<span class="age"> · age ${p.age}</span></h2>
+        <div class="preview">${previewEmojis}</div>
+        <p class="tagline">${p.tagline}</p>
+        <a class="play-btn" style="background:${p.colors.primary}; color:#fff;" href="memory.html?child=${key}">Play as ${p.child_name}</a>
+      `;
+      grid.appendChild(card);
+    });
+  </script>
 </body>
 </html>
